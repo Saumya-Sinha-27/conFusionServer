@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+var authenticate = require('../authenticate');
 const Leaders = require('../models/leaders');
 const Dishes = require('../models/dishes');
 
@@ -20,7 +21,7 @@ leaderRouter.route('/')
         .catch((err) => next(err));
     })
 
-    .post(function (req, res, next) {
+    .post(authenticate.verifyUser, function (req, res, next) {
         Leaders.create(req.body)
         .then((leaders) => {
             res.statusCode = 200;
@@ -30,7 +31,7 @@ leaderRouter.route('/')
         .catch((err) => next(err));
     })
 
-    .delete(function (req, res, next) {
+    .delete(authenticate.verifyUser, function (req, res, next) {
         Leaders.remove({})
         .then((resp) => {
             res.statusCode = 200;
@@ -52,7 +53,7 @@ leaderRouter.route('/:leaderId')
         .catch((err) => next(err));
     })
 
-    .put(function (req, res, next) {
+    .put(authenticate.verifyUser, function (req, res, next) {
         Leaders.findByIdAndUpdate(req.params.leaderId, { $set: req.body }, { new: true })
         .then((leader) => {
             res.statusCode = 200;
@@ -62,7 +63,7 @@ leaderRouter.route('/:leaderId')
         .catch((err) => next(err));
     })
 
-    .delete(function (req, res, next) {
+    .delete(authenticate.verifyUser, function (req, res, next) {
         Leaders.findByIdAndDelete(req.params.leaderId)
         .then((resp) => {
             res.statusCode = 200;
